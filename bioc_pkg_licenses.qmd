@@ -1,0 +1,139 @@
+---
+title: "Bioconductor package licenses"
+format: 
+    html:
+        css: styles.css
+date: "`r Sys.Date()`"
+---
+
+# Get Bioc package list
+
+```{r, include = FALSE}
+options(width = 120)
+```
+
+```{r}
+suppressPackageStartupMessages({
+    library(BiocPkgTools)
+    library(dplyr)
+    library(DT)
+})
+
+pkg <- biocPkgList(repo = c("BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
+```
+
+# Get licenses
+
+```{r}
+sort(table(pkg$License, useNA = "ifany"))
+```
+
+# Clean up
+
+```{r}
+## Get unique licenses
+lic <- unique(pkg$License)
+alres <- lapply(structure(lic, names = lic), tools:::analyze_license)
+
+## Get information about the licenses
+alres <- do.call(dplyr::bind_rows, lapply(names(alres), function(nm) {
+    a <- alres[[nm]]
+    data.frame(License = nm,
+               LicenseStandardizable = a$is_standardizable,
+               LicenseVerified = a$is_verified,
+               LicenseStandardization = a$standardization,
+               LicenseCanonical = a$is_canonical,
+               LicenseFOSS = a$is_FOSS,
+               LicenseRestrictsUse = a$restricts_use)
+}))
+
+## Add additional column removing the "+ file LICENSE" part (if we want to 
+## assume that this is compatible with the main license indication)
+alres$LicenseStandardizationShort <- gsub("[ ]*\\+*\\|*[ ]*file LICEN[SC]E",
+                                          "", alres$LicenseStandardization)
+
+dim(alres)
+length(unique(alres$LicenseStandardizationShort))
+DT::datatable(alres,
+              extensions = "FixedColumns",
+              options = list(scrollX = TRUE, 
+                             fixedColumns = list(leftColumns = 1),
+                             search = list(regex = FALSE, caseInsensitive = TRUE),
+                             pageLength = 20))
+```
+
+
+```{r}
+## Add license columns to pkg list
+pkg <- pkg %>% 
+    dplyr::select(Package, Maintainer, License, hasLICENSE) %>%
+    dplyr::left_join(alres, by = "License")
+dim(pkg)
+DT::datatable(pkg,
+              extensions = "FixedColumns",
+              options = list(scrollX = TRUE, 
+                             fixedColumns = list(leftColumns = 1),
+                             search = list(regex = FALSE, caseInsensitive = TRUE),
+                             pageLength = 20))
+```
+
+# Tabulate licenses
+
+```{r}
+sort(table(pkg$LicenseStandardizationShort, useNA = "ifany"))
+```
+
+# Some cases that may need attention
+
+Creative Commons recommends not using their licenses for software (but may be suitable for data packages): [https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software](https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software)
+
+```{r}
+DT::datatable(subset(pkg, grepl("CC|Creative Commons", LicenseStandardizationShort)),
+              extensions = "FixedColumns",
+              options = list(scrollX = TRUE, 
+                             fixedColumns = list(leftColumns = 1),
+                             search = list(regex = FALSE, caseInsensitive = TRUE),
+                             pageLength = 20))
+```
+
+Packages that have just a 'file LICENSE' (would need to check these manually): 
+
+```{r}
+DT::datatable(subset(pkg, LicenseStandardizationShort == ""),
+              extensions = "FixedColumns",
+              options = list(scrollX = TRUE, 
+                             fixedColumns = list(leftColumns = 1),
+                             search = list(regex = FALSE, caseInsensitive = TRUE),
+                             pageLength = 20))
+```
+
+Packages that have license "Unlimited":
+
+```{r}
+DT::datatable(subset(pkg, LicenseStandardizationShort == "Unlimited"),
+              extensions = "FixedColumns",
+              options = list(scrollX = TRUE, 
+                             fixedColumns = list(leftColumns = 1),
+                             search = list(regex = FALSE, caseInsensitive = TRUE),
+                             pageLength = 20))
+```
+
+Packages that have licenses that can not be standardized:
+
+```{r}
+DT::datatable(subset(pkg, is.na(LicenseStandardizationShort)),
+              extensions = "FixedColumns",
+              options = list(scrollX = TRUE, 
+                             fixedColumns = list(leftColumns = 1),
+                             search = list(regex = FALSE, caseInsensitive = TRUE),
+                             pageLength = 20))
+```
+
+The rest of the licenses appear to be approved open source licenses ([https://opensource.org/licenses/alphabetical](https://opensource.org/licenses/alphabetical)), although not always properly specified with a version etc. 
+
+# Session info
+
+```{r}
+sessionInfo()
+```
+
