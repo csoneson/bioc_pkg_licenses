@@ -36,8 +36,8 @@ jobs:
         
       - name: Install dependencies
         run: |
-          install.packages(c('remotes', 'dplyr', 'quarto', 'DT',
-                             'knitr', 'BiocPkgTools'), Ncpu = 2L)
+          BiocManager::install(c('remotes', 'dplyr', 'quarto', 'DT',
+                                 'knitr', 'BiocPkgTools'), Ncpu = 2L)
         shell: Rscript {0}
 
       - name: Session info
