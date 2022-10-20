@@ -47,7 +47,7 @@ alres <- do.call(dplyr::bind_rows, lapply(names(alres), function(nm) {
                LicenseRestrictsUse = a$restricts_use)
 }))
 
-## Add additional column removing the "+ file LICENSE" part (if we want to 
+## Add additional column removing the "+/| file LICENSE" part (if we want to 
 ## assume that this is compatible with the main license indication)
 alres$LicenseStandardizationShort <- gsub("[ ]*\\+*\\|*[ ]*file LICEN[SC]E",
                                           "", alres$LicenseStandardization)
@@ -56,6 +56,7 @@ dim(alres)
 length(unique(alres$LicenseStandardizationShort))
 DT::datatable(alres,
               extensions = "FixedColumns",
+              rownames = FALSE,
               options = list(scrollX = TRUE, 
                              fixedColumns = list(leftColumns = 1),
                              search = list(regex = FALSE, caseInsensitive = TRUE),
@@ -71,6 +72,7 @@ pkg <- pkg %>%
 dim(pkg)
 DT::datatable(pkg,
               extensions = "FixedColumns",
+              rownames = FALSE,
               options = list(scrollX = TRUE, 
                              fixedColumns = list(leftColumns = 1),
                              search = list(regex = FALSE, caseInsensitive = TRUE),
@@ -85,11 +87,12 @@ sort(table(pkg$LicenseStandardizationShort, useNA = "ifany"))
 
 # Some cases that may need attention
 
-Creative Commons recommends not using their licenses for software (but may be suitable for data packages): [https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software](https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software)
+Creative Commons recommends not using their licenses for software (but may be suitable for data packages): [https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software](https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software). Note though that the CC licenses are among the 'standard' open source licenses listed in the R license database: [https://svn.r-project.org/R/trunk/share/licenses/license.db](https://svn.r-project.org/R/trunk/share/licenses/license.db).
 
 ```{r}
 DT::datatable(subset(pkg, grepl("CC|Creative Commons", LicenseStandardizationShort)),
               extensions = "FixedColumns",
+              rownames = FALSE,
               options = list(scrollX = TRUE, 
                              fixedColumns = list(leftColumns = 1),
                              search = list(regex = FALSE, caseInsensitive = TRUE),
@@ -101,6 +104,7 @@ Packages that have just a 'file LICENSE' (would need to check these manually):
 ```{r}
 DT::datatable(subset(pkg, LicenseStandardizationShort == ""),
               extensions = "FixedColumns",
+              rownames = FALSE,
               options = list(scrollX = TRUE, 
                              fixedColumns = list(leftColumns = 1),
                              search = list(regex = FALSE, caseInsensitive = TRUE),
@@ -112,6 +116,7 @@ Packages that have license "Unlimited":
 ```{r}
 DT::datatable(subset(pkg, LicenseStandardizationShort == "Unlimited"),
               extensions = "FixedColumns",
+              rownames = FALSE,
               options = list(scrollX = TRUE, 
                              fixedColumns = list(leftColumns = 1),
                              search = list(regex = FALSE, caseInsensitive = TRUE),
@@ -123,6 +128,7 @@ Packages that have licenses that can not be standardized:
 ```{r}
 DT::datatable(subset(pkg, is.na(LicenseStandardizationShort)),
               extensions = "FixedColumns",
+              rownames = FALSE,
               options = list(scrollX = TRUE, 
                              fixedColumns = list(leftColumns = 1),
                              search = list(regex = FALSE, caseInsensitive = TRUE),
