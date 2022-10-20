@@ -1,0 +1,2 @@
+This repository contains a report looking at license usage among Bioconductor packages. 
+The report can be browsed at [https://csoneson.github.io/bioc_pkg_licenses/bioc_pkg_licenses.html](https://csoneson.github.io/bioc_pkg_licenses/bioc_pkg_licenses.html).
