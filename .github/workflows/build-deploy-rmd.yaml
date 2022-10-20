@@ -50,13 +50,13 @@ jobs:
         
       - name: Render site
         run: |
-          quarto::quarto_render("bioc_pkg_licenses.qmd") # defaults to html
+          quarto::quarto_render("bioc_pkg_licenses.qmd")
         shell: Rscript {0}
 
       - name: Prepare files to deploy
         run: |
           mkdir _site
-          cp -r bioc_pkg_licenses_files bioc_pkg_licenses.html _site/
+          cp -r bioc_pkg_licenses_files bioc_pkg_licenses.html styles.css _site/
 
       # deploy needs rsync? Seems so.
       - name: Install deploy dependencies
