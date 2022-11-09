@@ -4,6 +4,8 @@ format:
     html:
         css: styles.css
 date: "`r Sys.Date()`"
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Get Bioc package list
@@ -19,7 +21,8 @@ suppressPackageStartupMessages({
     library(DT)
 })
 
-pkg <- biocPkgList(repo = c("BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
+pkg <- biocPkgList(repo = "BioCsoft", version = "devel")
+# pkg <- biocPkgList(repo = c("BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
 ```
 
 # Get licenses
@@ -87,6 +90,8 @@ sort(table(pkg$LicenseStandardizationShort, useNA = "ifany"))
 
 # Some cases that may need attention
 
+## Creative Commons licenses
+
 Creative Commons recommends not using their licenses for software (but may be suitable for data packages): [https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software](https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software). Note though that the CC licenses are among the 'standard' open source licenses listed in the R license database: [https://svn.r-project.org/R/trunk/share/licenses/license.db](https://svn.r-project.org/R/trunk/share/licenses/license.db).
 
 ```{r}
@@ -99,7 +104,9 @@ DT::datatable(subset(pkg, grepl("CC|Creative Commons", LicenseStandardizationSho
                              pageLength = 20))
 ```
 
-Packages that have just a 'file LICENSE' (would need to check these manually): 
+## Packages that have just a 'file LICENSE'
+
+These need to be checked manually.
 
 ```{r}
 DT::datatable(subset(pkg, LicenseStandardizationShort == ""),
@@ -111,7 +118,7 @@ DT::datatable(subset(pkg, LicenseStandardizationShort == ""),
                              pageLength = 20))
 ```
 
-Packages that have license "Unlimited":
+## Packages that have license "Unlimited"
 
 ```{r}
 DT::datatable(subset(pkg, LicenseStandardizationShort == "Unlimited"),
@@ -123,7 +130,9 @@ DT::datatable(subset(pkg, LicenseStandardizationShort == "Unlimited"),
                              pageLength = 20))
 ```
 
-Packages that have licenses that can not be standardized:
+## Packages that have licenses that can not be standardized
+
+Some of these may be false positives. 
 
 ```{r}
 DT::datatable(subset(pkg, is.na(LicenseStandardizationShort)),
