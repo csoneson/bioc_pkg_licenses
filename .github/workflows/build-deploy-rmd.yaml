@@ -5,8 +5,8 @@ on:
   pull_request:
     branches:
       - main
-#  schedule:
-#    - cron: '0 9 * * 3'
+ schedule:
+   - cron: '0 9 * * 3'
 
 name: build-deploy-rmd
 
@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, image: 'bioconductor/bioconductor_docker:devel'}
+          - { os: ubuntu-latest, image: 'bioconductor/bioconductor_docker:devel' }
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
