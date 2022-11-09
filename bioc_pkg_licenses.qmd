@@ -21,7 +21,8 @@ suppressPackageStartupMessages({
     library(DT)
 })
 
-pkg <- biocPkgList(repo = "BioCsoft", version = "devel")
+BiocManager::version()
+pkg <- biocPkgList(repo = "BioCsoft")
 # pkg <- biocPkgList(repo = c("BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
 ```
 
