@@ -110,9 +110,19 @@ DT::datatable(subset(pkg, grepl("CC|Creative Commons", LicenseStandardizationSho
 These need to be checked manually.
 
 ```{r}
-DT::datatable(subset(pkg, LicenseStandardizationShort == ""),
+.makeLinkToLicense <- function(pkg, text) {
+    sprintf('<a href="%s" target="_blank"> %s</a>',
+            paste0("https://bioconductor.org/packages/devel/bioc/licenses/", 
+                   pkg, "/LICENSE"), 
+            text)
+}
+DT::datatable(subset(pkg, LicenseStandardizationShort == "") %>% 
+                  dplyr::mutate(License = vapply(seq_along(License), function(i) {
+                      .makeLinkToLicense(Package[i], License[i])
+                  }, "NA")),
               extensions = "FixedColumns",
               rownames = FALSE,
+              escape = FALSE,
               options = list(scrollX = TRUE, 
                              fixedColumns = list(leftColumns = 1),
                              search = list(regex = FALSE, caseInsensitive = TRUE),
