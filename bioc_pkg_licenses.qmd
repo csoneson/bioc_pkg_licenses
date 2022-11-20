@@ -3,6 +3,8 @@ title: "Bioconductor package licenses"
 format: 
     html:
         css: styles.css
+        toc: true
+        toc-location: left
 date: "`r Sys.Date()`"
 editor_options: 
   chunk_output_type: console
