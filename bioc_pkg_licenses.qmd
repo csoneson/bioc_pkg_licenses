@@ -93,9 +93,28 @@ sort(table(pkg$LicenseStandardizationShort, useNA = "ifany"))
 
 # Some cases that may need attention
 
+We attempt to estimate the fraction of packages that are provided under an OSI approved license. 
+It should be noted that, automatically performed, this will necessary be a rough estimate, e.g. since there are several packages that do not mention the license explicitly in the DESCRIPTION file but only provide the license text in a separate LICENSE file. 
+
+```{r}
+totalNbrPkg <- nrow(pkg)
+ccLicensed <- pkg$Package[grep("CC|Creative Commons", pkg$LicenseStandardizationShort)]
+fileLicense <- pkg$Package[which(pkg$LicenseStandardizationShort == "")]
+licUnlimited <- pkg$Package[which(pkg$LicenseStandardizationShort == "Unlimited")]
+licNotStandardizable <- pkg$Package[is.na(pkg$LicenseStandardizationShort)]
+
+fractionOSIApproved <- 1 - length(unique(c(ccLicensed, fileLicense, 
+                                           licUnlimited, licNotStandardizable)))/totalNbrPkg
+print(paste0("Rough estimate of fraction packages with OSI approved license: ", 
+             signif(100 * fractionOSIApproved, digits = 4), "%"))
+```
+
+
 ## Creative Commons licenses
 
-Creative Commons recommends not using their licenses for software (but may be suitable for data packages): [https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software](https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software). Note though that the CC licenses are among the 'standard' open source licenses listed in the R license database: [https://svn.r-project.org/R/trunk/share/licenses/license.db](https://svn.r-project.org/R/trunk/share/licenses/license.db).
+Creative Commons recommends not using their licenses for software (but may be suitable for data packages):
+[https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software](https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software). 
+Note though that the CC licenses are among the 'standard' open source licenses listed in the R license database: [https://svn.r-project.org/R/trunk/share/licenses/license.db](https://svn.r-project.org/R/trunk/share/licenses/license.db).
 
 ```{r}
 DT::datatable(subset(pkg, grepl("CC|Creative Commons", LicenseStandardizationShort)),
@@ -157,7 +176,7 @@ DT::datatable(subset(pkg, is.na(LicenseStandardizationShort)),
                              pageLength = 20))
 ```
 
-The rest of the licenses appear to be approved open source licenses ([https://opensource.org/licenses/alphabetical](https://opensource.org/licenses/alphabetical)), although not always properly specified with a version etc. 
+The rest of the licenses appear to be approved open source licenses ([https://opensource.org/licenses/alphabetical](https://opensource.org/licenses/alphabetical)). 
 
 # Session info
 
