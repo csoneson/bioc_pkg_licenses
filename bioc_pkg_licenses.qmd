@@ -39,6 +39,7 @@ sort(table(pkg$License, useNA = "ifany"))
 ```{r}
 ## Get unique licenses
 lic <- unique(pkg$License)
+lic <- lic[!is.na(lic)]
 alres <- lapply(structure(lic, names = lic), tools:::analyze_license)
 
 ## Get information about the licenses
